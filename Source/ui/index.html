@@ -1,0 +1,486 @@
+<style>
+:root{
+  --bg:#050609;--bg2:#080a0f;--panel:rgba(15,18,25,.78);--panel2:rgba(22,26,35,.72);
+  --glass:rgba(255,255,255,.045);--glass2:rgba(255,255,255,.075);--line:rgba(255,255,255,.12);
+  --line2:rgba(255,255,255,.06);--text:#f4f6fb;--muted:#858d9d;--muted2:#5e6675;
+  --accent:#b56cff;--accent2:#6fdcff;--hot:#ff647d;--green:#6fffc2;--gold:#e3bf78;
+  color-scheme:dark;box-sizing:border-box
+}
+*,*:before,*:after{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#050609;color:var(--text);font-family:Inter,"Segoe UI",system-ui,sans-serif}
+body{overflow-x:hidden;user-select:none;background:
+ radial-gradient(900px 420px at 50% -80px,rgba(181,108,255,.18),transparent 70%),
+ radial-gradient(700px 500px at 100% 35%,rgba(111,220,255,.08),transparent 70%),
+ linear-gradient(180deg,#07080c 0%,#040508 100%)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:
+ linear-gradient(115deg,transparent 0 38%,rgba(255,255,255,.018) 42%,transparent 48%),
+ repeating-linear-gradient(0deg,rgba(255,255,255,.009) 0 1px,transparent 1px 4px);mix-blend-mode:screen}
+button,select,input{font:inherit;color:inherit}
+button,select{border:1px solid var(--line);background:rgba(9,11,16,.72);border-radius:8px;cursor:pointer}
+button:hover,select:hover{border-color:rgba(181,108,255,.65);background:rgba(181,108,255,.08)}
+button:focus-visible,select:focus-visible,[role=slider]:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
+#err{display:none;position:fixed;z-index:99;top:0;left:0;right:0;padding:10px 16px;background:#4a111c;color:#fff;border-bottom:1px solid #ff6b83;font-size:12px}
+.app{width:min(1480px,100%);margin:0 auto;padding:14px 18px 24px}
+/* premium top shell */
+.top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:1.1fr minmax(440px,1.8fr) 1.1fr;gap:18px;align-items:center;padding:11px 14px;margin-bottom:10px;
+ background:linear-gradient(180deg,rgba(19,22,30,.92),rgba(8,10,14,.86));border:1px solid rgba(255,255,255,.11);border-radius:16px;
+ box-shadow:0 16px 50px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.top:after{content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;background:linear-gradient(105deg,transparent 15%,rgba(255,255,255,.035) 31%,transparent 43%,rgba(181,108,255,.045) 72%,transparent 85%)}
+.top-left,.top-right{display:flex;align-items:center;gap:10px;position:relative;z-index:1}.top-right{justify-content:flex-end}.top-left:before{content:"HZM // 01";font-size:9px;letter-spacing:.22em;color:var(--muted2);margin-right:2px}
+.brand{display:flex;align-items:center;gap:10px;min-width:130px}.brand-mark{width:34px;height:34px;border-radius:10px;border:1px solid rgba(181,108,255,.45);background:radial-gradient(circle at 35% 30%,#c58dff,#35135a 55%,#0c0910 80%);box-shadow:0 0 24px rgba(181,108,255,.22),inset 0 1px 0 #fff2;display:grid;place-items:center;font-size:11px;font-weight:800;letter-spacing:.08em}.brand-copy b{display:block;font-size:11px;letter-spacing:.22em}.brand-copy span{display:block;font-size:8px;color:var(--muted);letter-spacing:.16em;margin-top:2px}
+.top .mid{position:relative;z-index:1;display:flex;align-items:center;gap:8px;min-width:0}.top .mid .preset-frame{display:flex;align-items:center;gap:7px;flex:1;min-width:0;padding:5px 7px;border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.22);box-shadow:inset 0 1px 0 #fff1}
+.top .mid #preset{min-width:0;flex:1;border:0;background:transparent;text-align:center;padding:8px 6px;font-size:11px;font-weight:600;letter-spacing:.08em}.top .mid #prev,.top .mid #next{width:32px;height:32px;border-radius:8px;font-size:19px;color:#cbd0da}.preset-count{font-size:8px;letter-spacing:.14em;color:var(--muted2);white-space:nowrap;padding:0 4px}.ab{display:flex;gap:4px;margin-left:4px}.ab button{width:28px;height:28px;padding:0;border-radius:7px;font-size:9px;font-weight:800;color:var(--muted)}.ab button.on{color:#fff;border-color:rgba(181,108,255,.7);background:rgba(181,108,255,.16);box-shadow:0 0 18px rgba(181,108,255,.12)}
+.top .k{transform:scale(.84);transform-origin:right center}.top-right .k{transform-origin:right center}.top-left .k{transform-origin:left center}
+/* glass navigation */
+.nav{display:flex;justify-content:center;gap:5px;padding:5px;margin-bottom:12px;border:1px solid var(--line2);border-radius:13px;background:rgba(10,12,17,.68);box-shadow:0 12px 32px #0007,inset 0 1px 0 #fff1;backdrop-filter:blur(18px)}
+.nav button{width:86px;height:48px;border-color:transparent;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:5px;flex-direction:column;font-size:8px;text-transform:uppercase;letter-spacing:.16em}.nav button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.4}.nav button.on{color:#fff;border-color:rgba(181,108,255,.35);background:linear-gradient(180deg,rgba(181,108,255,.15),rgba(181,108,255,.045));box-shadow:inset 0 -2px 0 var(--accent),0 5px 22px rgba(181,108,255,.08)}
+.pane{display:none}.pane.show{display:block;animation:fade .25s ease}@keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* hero / amp */
+.stage{position:relative;padding:28px 4px 14px}.handle{position:absolute;top:3px;left:50%;width:180px;height:27px;margin-left:-90px;border:5px solid #252932;border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -2px 18px #0008,inset 0 1px 0 #fff1}
+.head{--hb:linear-gradient(145deg,#12151b,#08090c);--pb:linear-gradient(180deg,rgba(29,33,42,.82),rgba(10,12,16,.92));--gb:radial-gradient(circle at 50% 50%,#1c1029,#07090e 65%);--gf:drop-shadow(0 0 12px rgba(181,108,255,.35));--glow:#b56cff;--pl:#a8afbd;--pk:#f3f5f9;
+ position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:var(--hb);box-shadow:0 35px 100px #000e,0 0 0 1px #000,inset 0 1px 0 #fff1;}
+.head:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.055),transparent 22%,transparent 72%,rgba(181,108,255,.04));z-index:4}
+.grille{position:relative;height:360px;margin:14px 14px 0;border-radius:13px;border:1px solid rgba(255,255,255,.08);overflow:hidden;background:var(--gb);box-shadow:inset 0 0 60px #000,0 0 0 1px #000;filter:var(--gf)}
+.grille:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 0 25%,rgba(255,255,255,.055) 34%,transparent 42%,transparent 67%,rgba(255,255,255,.04) 75%,transparent 82%),radial-gradient(circle at 50% 50%,transparent 0 27%,rgba(0,0,0,.22) 63%,rgba(0,0,0,.5) 100%)}
+.grille svg{width:100%;height:100%;display:block;transition:opacity .25s}
+.panel{position:relative;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 2px;margin:14px;padding:18px 16px 13px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:var(--pb);box-shadow:inset 0 1px 0 #fff1,inset 0 0 35px #0007,0 12px 28px #0006;backdrop-filter:blur(12px)}
+.panel:before{content:"SISHHIN // HZ MACHINE";position:absolute;left:15px;top:7px;font-size:7px;letter-spacing:.24em;color:var(--pl);opacity:.7}.panel:after{content:"V 1.3";position:absolute;right:15px;top:7px;font-size:7px;letter-spacing:.16em;color:var(--pl);opacity:.7}
+.badge{font-weight:800;letter-spacing:.28em;font-size:15px;margin-right:10px;color:var(--pk);padding:7px 11px;border:1px solid var(--pl);border-radius:8px;background:rgba(0,0,0,.12);box-shadow:inset 0 1px 0 #fff1,0 0 18px rgba(181,108,255,.06)}
+.panel .k{width:68px}.panel .kl{color:var(--pl)}.panel .kv{color:var(--pk)}.panel .ch button{color:var(--pk);border-color:var(--pl)}.panel .ch button.on{color:var(--glow);border-color:var(--glow);background:rgba(181,108,255,.1)}
+.jewel{width:8px;height:8px;border-radius:50%;background:var(--glow);box-shadow:0 0 18px var(--glow),0 0 5px #fff6;margin-left:8px}.feet{display:flex;justify-content:space-between;padding:0 34px 12px}.feet i{width:50px;height:8px;border-radius:0 0 6px 6px;background:#000;box-shadow:0 3px 7px #000}
+/* knob system */
+.k,.f{display:inline-flex;flex-direction:column;align-items:center;gap:3px;width:68px;cursor:ns-resize;touch-action:none}.kw{width:52px;height:52px;position:relative}.kr{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from -135deg,var(--glow) 0 var(--a,0deg),rgba(255,255,255,.1) var(--a,0deg) 270deg,transparent 270deg);-webkit-mask:radial-gradient(circle,transparent 22px,#000 23px);mask:radial-gradient(circle,transparent 22px,#000 23px);filter:drop-shadow(0 0 5px rgba(181,108,255,.15))}.kb{position:absolute;inset:7px;border-radius:50%;background:radial-gradient(circle at 32% 26%,#505662,#11141a 62%,#080a0d 100%);border:1px solid #000;box-shadow:0 4px 9px #000b,inset 0 1px 0 #fff2,inset 0 -8px 16px #0007}.kb:before{content:"";position:absolute;inset:3px;border-radius:50%;background:repeating-conic-gradient(#fff0 0 10deg,#ffffff0c 10deg 11deg,#fff0 11deg 22deg)}.kb i{position:absolute;left:50%;top:3px;width:2px;height:10px;margin-left:-1px;background:#fff;border-radius:2px;box-shadow:0 0 5px #fff6}.kl{font-size:8px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;text-align:center}.kv{font-size:9px;color:#f1f3f7;min-height:13px;font-variant-numeric:tabular-nums}.f{width:58px}.ft{width:6px;height:118px;background:#030405;border:1px solid var(--line);position:relative;border-radius:4px;margin:7px 0}.ft b{position:absolute;left:50%;width:30px;height:16px;margin-left:-15px;margin-bottom:-8px;background:linear-gradient(#4c535e,#1a1e25);border:1px solid #000;border-radius:4px;box-shadow:0 3px 7px #000}.ft b:after{content:"";position:absolute;left:4px;right:4px;top:7px;height:1px;background:#fff}
+.ch{display:inline-flex}.ch button{padding:6px 9px;font-size:9px;letter-spacing:.07em}.ch button+button{margin-left:-1px}.tg{display:inline-flex;flex-direction:column;align-items:center;gap:4px}.tg button{padding:5px 10px;font-size:9px}.tg button.on{border-color:var(--accent);color:#fff;background:rgba(181,108,255,.14)}
+/* chain/pedals */
+.peds{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:2px}.ped{position:relative;min-height:190px;padding:14px 9px;border:1px solid rgba(255,255,255,.1);border-radius:15px;background:linear-gradient(145deg,rgba(25,29,38,.88),rgba(7,9,13,.88));box-shadow:0 20px 45px #0009,inset 0 1px 0 #fff1;backdrop-filter:blur(14px);text-align:center;overflow:hidden}.ped:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,#fff1,transparent 25%,transparent 70%,rgba(181,108,255,.05));pointer-events:none}.ped .rw{display:flex;justify-content:center;flex-wrap:wrap;gap:2px}.ped .k{width:68px}.ped .gl{width:50px;height:38px;fill:none;stroke:#dfe5eecc;stroke-width:2;margin:8px 0 1px}.ped .nm{font-weight:700;letter-spacing:.18em;font-size:10px;color:#f2f4f8;margin-bottom:8px}.fs{width:50px;height:38px;border-radius:10px;margin:4px auto 0;background:linear-gradient(#525965,#171a20);border:2px solid #0a0b0e;box-shadow:0 4px 10px #000a,inset 0 1px 0 #fff2;cursor:pointer;padding:0}.led{width:6px;height:6px;border-radius:50%;background:#351118;position:absolute;right:17px;bottom:24px}.led.on{background:var(--hot);box-shadow:0 0 12px var(--hot)}
+/* synth */
+.synth-shell{display:grid;grid-template-columns:1.55fr .72fr;gap:14px}.syn-card{position:relative;padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:linear-gradient(145deg,rgba(20,24,33,.88),rgba(7,9,13,.9));box-shadow:0 28px 65px #000a,inset 0 1px 0 #fff1;backdrop-filter:blur(18px);overflow:hidden}.syn-card:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.055),transparent 24%,transparent 70%,rgba(181,108,255,.07));}.syn-head{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.syn-title{font-weight:800;font-size:14px;letter-spacing:.2em}.syn-sub{font-size:8px;color:var(--muted);letter-spacing:.13em;margin-top:3px}.syn-toggle{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:8px;letter-spacing:.15em}.syn-display{position:relative;border:1px solid rgba(181,108,255,.22);border-radius:13px;background:radial-gradient(circle at 50% 50%,rgba(181,108,255,.09),transparent 58%),#05070b;box-shadow:inset 0 0 35px #000,0 0 25px rgba(181,108,255,.05);overflow:hidden}.syn-display canvas{width:100%;height:190px;display:block}.syn-badge{position:absolute;top:9px;left:11px;font-size:7px;letter-spacing:.18em;color:#b9a5d5;z-index:2}.syn-wave,.syn-voice{position:relative;display:flex;flex-wrap:wrap;gap:5px;margin:7px 0 14px}.syn-wave button,.syn-voice button{padding:7px 10px;font-size:8px;letter-spacing:.1em;color:var(--muted);border-radius:7px}.syn-wave button.on,.syn-voice button.on{color:#fff;border-color:rgba(111,220,255,.6);background:rgba(111,220,255,.08);box-shadow:inset 0 -2px 0 var(--accent2)}.syn-grid,.syn-advanced{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.syn-advanced{margin-top:12px;padding-top:12px;border-top:1px solid var(--line2)}.syn-section{padding:12px 0;border-bottom:1px solid var(--line2)}.syn-section h4{font-size:8px;letter-spacing:.2em;color:var(--muted);margin:0 0 8px}.syn-side .syn-grid{grid-template-columns:repeat(2,1fr)}
+/* cabinet / eq */
+.cabv{display:grid;grid-template-columns:1.08fr .92fr;gap:16px;align-items:center}.cab-frame,.eqp{padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:linear-gradient(145deg,rgba(19,23,31,.88),rgba(7,9,13,.92));box-shadow:0 28px 60px #000a,inset 0 1px 0 #fff1;backdrop-filter:blur(16px)}.cab-frame svg{width:100%;max-width:620px;display:block;margin:auto;filter:drop-shadow(0 22px 28px #000)}.cab-controls{padding:16px;border:1px solid var(--line2);border-radius:14px;background:rgba(0,0,0,.16)}.cabk{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:14px 0}.eqp canvas{width:100%;height:220px;display:block;border:1px solid var(--line2);border-radius:10px;background:radial-gradient(circle at 50% 50%,rgba(181,108,255,.08),transparent 60%),#05070b}.eqr{display:flex;flex-wrap:wrap;justify-content:center;gap:5px 12px;margin-top:14px}.band{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 6px}
+/* footer / meters */
+.foot{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:12px;padding:9px;border:1px solid var(--line2);border-radius:11px;color:var(--muted);font-size:8px;letter-spacing:.12em;background:rgba(8,10,14,.6)}.bar{width:170px;height:4px;border-radius:3px;background:#151922;position:relative;overflow:hidden}.bar i{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,var(--accent2),var(--accent));box-shadow:0 0 10px var(--accent)}.bar i.hot{background:var(--hot);box-shadow:0 0 10px var(--hot)}
+/* mode signatures */
+.head[data-m="0"]{--glow:#74d7ff;--gf:drop-shadow(0 0 10px rgba(116,215,255,.22));--gb:radial-gradient(circle at 50% 50%,#102d38,#07090e 70%)}
+.head[data-m="1"]{--glow:#e4b15f;--gf:drop-shadow(0 0 11px rgba(228,177,95,.28));--gb:radial-gradient(circle at 50% 50%,#35230c,#08090c 70%)}
+.head[data-m="2"]{--glow:#b56cff;--gf:drop-shadow(0 0 14px rgba(181,108,255,.38));--gb:radial-gradient(circle at 50% 50%,#26103d,#06070b 70%)}
+.head[data-m="3"]{--glow:#ff647d;--gf:drop-shadow(0 0 12px rgba(255,100,125,.3));--gb:radial-gradient(circle at 50% 50%,#3d101c,#07080c 70%)}
+.head[data-m="4"]{--glow:#e3bf78;--gf:drop-shadow(0 0 12px rgba(227,191,120,.26));--gb:radial-gradient(circle at 50% 50%,#3a2810,#08090c 70%)}
+@media(max-width:1050px){.peds{grid-template-columns:repeat(3,1fr)}.synth-shell,.cabv{grid-template-columns:1fr}.top{grid-template-columns:1fr}.top-left,.top-right{justify-content:center}.top .mid{order:2}.top-right{order:3}}
+@media(max-width:760px){.app{padding:8px}.nav button{width:62px}.nav{overflow:auto;justify-content:flex-start}.grille{height:230px}.panel{gap:4px}.syn-grid,.syn-advanced{grid-template-columns:repeat(2,1fr)}.cabk{grid-template-columns:repeat(3,1fr)}.peds{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.peds{grid-template-columns:1fr}.top .mid{min-width:0}.preset-count{display:none}.brand-copy{display:none}.grille{height:190px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<body>
+<div id="err"></div>
+<div class="app">
+  <div class="top">
+    <div class="top-left">
+      <div class="brand"><div class="brand-mark">HZ</div><div class="brand-copy"><b>SISHHIN</b><span>HZ MACHINE // PRO</span></div></div>
+      <div data-k="ingain"></div><div style="display:flex;align-items:center;gap:1px"><div data-k="gate"></div><div data-tg="gateon" data-l="GATE"></div></div><div data-k="transpose"></div>
+    </div>
+    <div class="mid">
+      <div class="preset-frame"><button id="prev" title="Previous preset">‹</button><select id="preset" title="Preset browser"></select><button id="next" title="Next preset">›</button><span id="presetCount" class="preset-count">108 PRESETS</span></div>
+      <div class="ab"><button id="ab-a" class="on">A</button><button id="ab-b">B</button></div>
+    </div>
+    <div class="top-right"><div data-k="out"></div></div>
+  </div>
+
+  <div class="nav" id="nav"></div>
+
+  <div class="pane" id="p-pedals"><div class="peds" id="peds"></div></div>
+
+  <div class="pane show" id="p-amp">
+    <div class="stage"><div class="handle"></div><div class="head">
+      <div class="grille"><svg id="gr" viewBox="0 0 660 190" preserveAspectRatio="none"></svg></div>
+      <div class="panel">
+        <div class="badge">HZ MACHINE</div>
+        <div data-ch="mode" data-n="Clean,Crunch,Modern,Lead,Sitar"></div>
+        <div data-k="gain"></div><div data-k="tight"></div><div data-k="bass"></div><div data-k="mid"></div><div data-k="treble"></div><div data-k="pres"></div><div data-k="depth"></div><div data-k="master"></div>
+        <i class="jewel"></i>
+      </div><div class="feet"><i></i><i></i></div>
+    </div></div>
+  </div>
+
+  <div class="pane" id="p-synth">
+    <div class="synth-shell">
+      <div class="syn-card">
+        <div class="syn-head"><div><div class="syn-title">GUITAR SYNTH</div><div class="syn-sub">TRACKING ENGINE // GLASS ARCHITECTURE</div></div><div class="syn-toggle"><span>TRACK</span><div data-tg="synon" data-l="ON"></div></div></div>
+        <div class="syn-display"><span class="syn-badge">HZ // SYNTH ENGINE</span><canvas id="sync" width="900" height="185"></canvas></div>
+        <div class="kl" style="text-align:left;margin-top:12px">OSCILLATOR SHAPE</div><div class="syn-wave" id="synwave"></div>
+        <div class="kl" style="text-align:left">VOICE ARCHETYPE</div><div class="syn-voice" id="synvoice"></div>
+        <div class="syn-grid"><div data-k="synmix"></div><div data-k="synsub"></div><div data-k="syndrive"></div><div data-k="synspread"></div><div data-k="syncut"></div><div data-k="synres"></div><div data-k="syntrk"></div><div data-k="synstab"></div></div>
+        <div class="syn-advanced"><div data-k="synosc2"></div><div data-k="syndetune"></div><div data-k="synpw"></div><div data-k="synfilter"></div><div data-k="synenvamt"></div><div data-k="synlforate"></div><div data-k="synlfodepth"></div><div data-k="synglide"></div><div data-k="synnoise"></div></div>
+      </div>
+      <div class="syn-card syn-side">
+        <div class="syn-head"><div><div class="syn-title">ENVELOPE</div><div class="syn-sub">PLAYABILITY // FILTER MOTION</div></div></div>
+        <div class="syn-section"><h4>AMPLITUDE</h4><div class="syn-grid"><div data-k="synatt"></div><div data-k="syndec"></div><div data-k="synsus"></div><div data-k="synrel"></div></div></div>
+        <div class="syn-section"><h4>VOICE</h4><div class="syn-grid"><div data-k="synmod"></div><div data-k="synoct"></div></div></div>
+        <div class="syn-section"><h4>SIGNAL FLOW</h4><div class="ch"><button class="on" disabled>GUITAR</button><button class="on" disabled>SYNTH</button><button class="on" disabled>FILTER</button><button class="on" disabled>DRIVE</button></div></div>
+        <div class="syn-section"><div class="kl" style="text-align:left;line-height:1.8">A focused monophonic guitar synth: fast pitch tracking, controlled glide, resonant filtering, sub layer and playable modulation. The factory bank intentionally keeps synth presets limited to six signature voices.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pane" id="p-cab"><div class="cabv">
+    <div class="cab-frame"><svg id="cabsvg" viewBox="0 0 420 270"></svg></div>
+    <div class="cab-controls"><div class="kl" style="text-align:left">CABINET</div><div data-ch="cab" data-n="1x12 Open,2x12 Open,4x12 Modern,4x12 Dark,2x12 Bright,4x10 Dry" style="margin:6px 0 14px"></div><div class="kl" style="text-align:left">MICROPHONE</div><div data-ch="mic" data-n="Dynamic,Condenser,Ribbon" style="margin:6px 0"></div><div class="cabk"><div data-k="cabmix"></div><div data-k="dist"></div><div data-k="pos"></div><div data-k="angle"></div><div data-k="room"></div></div><button id="irbtn" disabled>Load WAV IR</button> <button id="irclr" style="display:none">×</button></div>
+  </div></div>
+
+  <div class="pane" id="p-eq"><div class="eqp"><canvas id="eqc" width="1100" height="220"></canvas><div class="eqr" id="eqr"></div></div></div>
+
+  <div class="foot"><span style="opacity:.6">SISHHIN HZ MACHINE // PRO BUILD</span><span>IN</span><div class="bar"><i id="m-in"></i></div><span>OUT</span><div class="bar"><i id="m-out"></i></div><span style="opacity:.5">48K / 64S</span></div>
+</div>
+
+<script>
+function shzBanner(m){var e=document.getElementById('err');if(e){e.textContent=m;e.style.display='block'}}
+window.addEventListener('error',function(ev){shzBanner('Script error: '+ev.message)});
+window.addEventListener('unhandledrejection',function(ev){shzBanner('Script error: '+ev.reason)});
+</script>
+<script type="module">
+(async()=>{try{
+// id, label, min, max, default, unit, step
+const D=[
+['ingain','Input',-12,12,0,' dB',.1],['gate','Threshold',-80,-20,-55,' dB',1],['transpose','Transpose',-12,12,0,' st',1],['out','Output',-24,12,-6,' dB',.1],
+['gain','Gain',0,10,6,'',.1],['tight','Tight',0,10,5,'',.1],['bass','Bass',0,10,5,'',.1],['mid','Mid',0,10,6,'',.1],['treble','Treble',0,10,5,'',.1],['pres','Presence',0,10,5,'',.1],['depth','Depth',0,10,4,'',.1],['master','Master',0,10,6,'',.1],
+['d_drive','Drive',0,10,4,'',.1],['d_tone','Tone',0,10,5,'',.1],['d_level','Level',0,10,6,'',.1],['d_tight','Tight',0,10,6,'',.1],
+['b_gain','Boost',0,10,5,'',.1],['b_tone','Tone',0,10,5,'',.1],['b_level','Level',0,10,5,'',.1],
+['c_sus','Sustain',0,10,5,'',.1],['c_att','Attack',0,10,5,'',.1],['c_level','Level',0,10,5,'',.1],
+['t_pitch','Pitch',-12,12,-2,' st',1],['t_blend','Blend',0,10,10,'',.1],
+['s_buzz','Buzz',0,10,6,'',.1],['s_res','Sympathy',0,10,5,'',.1],['s_tone','Tone',0,10,6,'',.1],['s_mix','Mix',0,10,7,'',.1],
+['synon','On',0,1,0,'',1],['synmix','Mix',0,1,.75,'',.01],['synwave','Wave',0,4,1,'',1],['synsub','Sub',0,1,.35,'',.01],['syncut','Cutoff',80,12000,4200,' Hz',10],['synres','Resonance',0,1,.18,'',.01],
+['synatt','Attack',.5,250,8,' ms',.5],['syndec','Decay',5,1000,120,' ms',1],['synsus','Sustain',0,1,.72,'',.01],['synrel','Release',10,1200,180,' ms',1],['synoct','Octave',-2,2,0,'',1],['syntrk','Tracking',0,1,.65,'',.01],['synstab','Stability',0,1,.65,'',.01],['syndrive','Drive',0,10,2,'',.1],['synspread','Spread',0,1,.22,'',.01],['synmod','Mod',0,1,.35,'',.01],
+['synvoice','Voice',0,7,2,'',1],['synosc2','Osc 2',0,1,.65,'',.01],['syndetune','Detune',-24,24,7,' cents',.1],['synpw','Pulse',.05,.95,.50,'',.01],['synfilter','Filter',0,2,0,'',1],['synenvamt','Env Amt',-1,1,.55,'',.01],['synlforate','LFO Rate',.1,12,5,' Hz',.1],['synlfodepth','LFO Depth',0,1,.18,'',.01],['synglide','Glide',0,250,25,' ms',1],['synnoise','Noise',0,1,.03,'',.01],
+['cabmix','IR mix',0,100,100,' %',1],['dist','Distance',0,10,3,'',.1],['pos','Position',0,10,4,'',.1],['angle','Angle',0,10,2,'',.1],['room','Room',0,10,1,'',.1],
+['e1','Low',-15,15,0,' dB',.1],['e2','Low mid',-15,15,0,' dB',.1],['e3','Mid',-15,15,0,' dB',.1],['e4','High mid',-15,15,0,' dB',.1],['e5','High',-15,15,0,' dB',.1],
+['f1','Freq',30,300,80,' Hz',1],['f2','Freq',120,800,300,' Hz',1],['f3','Freq',400,3000,1000,' Hz',1],['f4','Freq',1500,8000,3000,' Hz',10],['f5','Freq',3000,16000,8000,' Hz',10],
+['hpf','HPF',20,300,40,' Hz',1],['lpf','LPF',3000,16000,12000,' Hz',10],
+['mode','Mode',0,4,2,'',1],['cab','Cab',0,5,2,'',1],['mic','Mic',0,2,0,'',1],
+['gateon','Gate',0,1,1,'',1],['drvon','On',0,1,1,'',1],['bston','On',0,1,0,'',1],['cmpon','On',0,1,0,'',1],['tunon','On',0,1,0,'',1],['stron','On',0,1,0,'',1]];
+// 108 curated factory presets. Only six presets intentionally use the synth.
+// not copies of any commercial preset bank. Each category gets 11 production-ready variants.
+const CATS={};
+// Curated factory bank: 102 amp/rack presets + only 6 synth presets.
+// The recipes are intentionally hand-shaped around gain staging, EQ balance, cabinet choice and playing use.
+const base={ingain:0,gate:-55,transpose:0,out:-6,gain:5,tight:5,bass:5,mid:5,treble:5,pres:5,depth:4,master:6,
+ d_drive:3.2,d_tone:5.2,d_level:5.6,d_tight:6,b_gain:4.5,b_tone:5.5,b_level:5.5,c_sus:5,c_att:5,c_level:5,t_pitch:-2,t_blend:10,
+ s_buzz:6,s_res:5,s_tone:6,s_mix:7,cabmix:100,dist:3,pos:4,angle:2,room:1,e1:0,e2:0,e3:0,e4:0,e5:0,f1:80,f2:300,f3:1000,f4:3000,f5:8000,hpf:40,lpf:12000,
+ mode:2,cab:2,mic:0,gateon:1,drvon:0,bston:0,cmpon:0,tunon:0,stron:0,synon:0,synmix:.75,synwave:0,synsub:.35,syncut:4200,synres:.18,synatt:8,syndec:120,synsus:.72,synrel:180,synoct:0,syntrk:.7,synstab:.75,syndrive:2,synspread:.22,synmod:.35,synvoice:2,synosc2:.65,syndetune:7,synpw:.5,synfilter:0,synenvamt:.55,synlforate:5,synlfodepth:.18,synglide:25,synnoise:.03};
+const P=(name,v)=>[name,{...base,...v}];
+function add(cat,list){CATS[cat]=Object.fromEntries(list.map(x=>P(x[0],x[1])))}
+add('CLEAN',[
+['Silver Room',{mode:0,gain:3.0,tight:2.4,bass:5.3,mid:5.0,treble:6.0,pres:5.1,depth:4.2,cab:1,mic:1,room:1.2,e2:.5,e4:1.0}],
+['Twin Afterdark',{mode:0,gain:3.5,tight:2.7,bass:5.7,mid:5.8,treble:5.4,pres:4.7,depth:4.8,cab:3,mic:2,room:1.6,e1:.8,e5:-.6}],
+['Glass Horizon',{mode:0,gain:2.8,tight:2.2,bass:5.4,mid:4.8,treble:5.8,pres:4.8,depth:3.8,master:6.2,cab:0,mic:1,drvon:0,room:1.5,e3:1.2,e4:.6,lpf:13500}],
+['Velvet Studio',{mode:0,gain:2.2,tight:1.8,bass:5.8,mid:5.3,treble:4.8,pres:4.2,depth:4.3,master:6.4,cab:1,mic:2,e1:.7,e2:.5,e5:-.7,lpf:11500}],
+['Black Glass',{mode:0,gain:3.4,tight:2.8,bass:4.8,mid:5.8,treble:6.2,pres:5.6,depth:3.4,cab:4,mic:0,drvon:1,d_drive:1.6,d_tone:5.5,d_level:4.8}],
+['Wide Chorus Base',{mode:0,gain:2.5,tight:2,bass:5.5,mid:4.6,treble:6.1,pres:5.5,depth:5,cab:1,mic:1,room:2.5,e4:1.1,e5:1.3}],
+['Pickup Bloom',{mode:0,gain:3.8,tight:2.6,bass:5.1,mid:5.4,treble:5.5,pres:4.8,depth:4,cab:0,mic:0,drvon:1,d_drive:2.4,d_tone:5.8,d_level:4.6}],
+['Neckwood',{mode:0,gain:2.7,tight:1.5,bass:6.1,mid:5.7,treble:4.3,pres:3.8,depth:5.2,cab:1,mic:2,e1:1.2,e2:.8,e5:-1.2}],
+['Edge Of Clean',{mode:1,gain:3.7,tight:3.4,bass:5.2,mid:5.2,treble:5.7,pres:5.2,depth:4.2,cab:0,mic:0,drvon:1,d_drive:1.8,d_tone:6,d_level:5.1}],
+['Shimmer Lead Clean',{mode:0,gain:3.1,tight:2.5,bass:4.9,mid:6.1,treble:6.3,pres:6.1,depth:3.2,cab:4,mic:1,e4:1.8,e5:1.2,lpf:14500}],
+['Low String Clean',{mode:0,gain:2.4,tight:3.2,bass:6.4,mid:4.9,treble:4.7,pres:4.1,depth:5.8,cab:5,mic:2,e1:1.4,e3:-.6}],
+['Midnight Clean',{mode:0,gain:2.9,tight:2.7,bass:5.6,mid:5.9,treble:5.2,pres:4.6,depth:4.7,cab:3,mic:2,room:1.8,e2:.7,e3:.8}]
+]);
+add('CRUNCH & ROCK',[
+['Copper Riot',{mode:1,gain:5.6,tight:4.0,bass:5.4,mid:6.5,treble:6.0,pres:5.6,depth:4.0,cab:2,mic:0,drvon:1,d_drive:3.1,d_tone:6.0,d_level:5.3}],
+['Old Stage',{mode:1,gain:4.9,tight:3.0,bass:6.0,mid:6.1,treble:5.4,pres:4.9,depth:5.0,cab:0,mic:2,drvon:1,d_drive:2.5,d_tone:5.2,d_level:5.1,room:1.5}],
+['Brown Voltage',{mode:1,gain:4.7,tight:3.5,bass:5.6,mid:6.2,treble:5.8,pres:5.3,depth:4.4,cab:0,mic:0,drvon:1,d_drive:2.6,d_tone:5.7,d_level:5.2}],
+['Hot Plex Edge',{mode:1,gain:5.2,tight:4.1,bass:5.0,mid:6.6,treble:6.1,pres:5.7,depth:4.0,cab:1,mic:0,drvon:1,d_drive:3.0,d_tone:6.2,d_level:5.3}],
+['Stone Rhythm',{mode:1,gain:5.5,tight:4.8,bass:5.4,mid:5.6,treble:5.3,pres:5.0,depth:4.8,cab:2,mic:0,drvon:1,d_drive:3.4,d_tone:5.4,d_level:5.6}],
+['Classic Bite',{mode:1,gain:4.3,tight:3.2,bass:5.1,mid:6.8,treble:6.5,pres:6.0,depth:3.7,cab:4,mic:1,drvon:1,d_drive:2.1,d_tone:6.8,d_level:5}],
+['Pushed Green',{mode:1,gain:4.0,tight:5.2,bass:4.4,mid:6.0,treble:5.8,pres:5.5,depth:3.8,cab:2,mic:0,drvon:1,d_drive:4,d_tone:5.5,d_level:5.8}],
+['Open Rock',{mode:1,gain:5.0,tight:2.8,bass:6.1,mid:5.7,treble:5.5,pres:4.6,depth:5.4,cab:1,mic:2,room:1.4}],
+['Riff Lantern',{mode:1,gain:5.8,tight:5.8,bass:4.8,mid:6.3,treble:5.9,pres:5.8,depth:4.2,cab:2,mic:0,drvon:1,d_drive:3.8,d_tone:5.8,d_level:5.8}],
+['Burning Chime',{mode:1,gain:6.0,tight:4.2,bass:4.5,mid:6.8,treble:6.4,pres:6.2,depth:3.8,cab:4,mic:1,drvon:1,d_drive:3.2,d_tone:6.5,d_level:5.5}],
+['Raw Room',{mode:1,gain:4.8,tight:3.6,bass:5.8,mid:5.2,treble:5.1,pres:4.5,depth:5.5,cab:5,mic:2,room:3.2}],
+['Arena Crunch',{mode:1,gain:6.3,tight:4.6,bass:5.2,mid:6.0,treble:6.1,pres:6.0,depth:4.0,cab:2,mic:0,bston:1,b_gain:3.5,b_tone:6.2,b_level:5.8}]
+]);
+add('MODERN METAL',[
+['Obsidian Core',{mode:2,gain:7.3,tight:7.6,bass:4.0,mid:5.6,treble:5.7,pres:6.2,depth:3.7,cab:2,mic:0,drvon:1,d_drive:4.4,d_tight:8.0,d_tone:5.5,d_level:5.8}],
+['Silver Fang',{mode:2,gain:6.7,tight:8.0,bass:3.6,mid:6.3,treble:6.0,pres:6.6,depth:3.0,cab:4,mic:1,drvon:1,d_drive:4.1,d_tight:8.5,d_tone:6.1,d_level:5.8}],
+['Razor Crown',{mode:2,gain:6.8,tight:7.2,bass:4.0,mid:5.7,treble:5.8,pres:6.1,depth:3.8,master:6.3,cab:2,mic:0,drvon:1,d_drive:4.2,d_tight:7.4,d_tone:5.4,d_level:5.8,hpf:55,lpf:9500}],
+['Blackout 515',{mode:2,gain:7.2,tight:6.6,bass:4.5,mid:5.1,treble:6.2,pres:6.4,depth:3.5,cab:2,mic:0,drvon:1,d_drive:3.8,d_tight:7.0,d_tone:6.0,d_level:5.7}],
+['Tight Horizon',{mode:2,gain:6.4,tight:8.1,bass:3.7,mid:6.2,treble:5.5,pres:6.2,depth:3.2,cab:4,mic:0,drvon:1,d_drive:4.6,d_tight:8.5,d_tone:5.1,d_level:5.9}],
+['Iron Room',{mode:2,gain:7.6,tight:6.0,bass:4.7,mid:5.8,treble:5.4,pres:5.7,depth:4.8,cab:3,mic:2,drvon:1,d_drive:4.0,d_tight:6.5,d_tone:4.8,d_level:5.8}],
+['Violet Wall',{mode:2,gain:7.0,tight:7.0,bass:4.2,mid:6.7,treble:5.8,pres:6.4,depth:3.5,cab:2,mic:1,drvon:1,d_drive:4.4,d_tight:7.8,d_tone:5.8,d_level:5.7}],
+['Midnight Viper',{mode:2,gain:7.8,tight:7.5,bass:3.5,mid:5.0,treble:6.0,pres:6.7,depth:3.0,cab:4,mic:0,drvon:1,d_drive:4.8,d_tight:8,d_tone:6.1,d_level:6}],
+['Low Orbit',{mode:2,gain:6.6,tight:6.4,bass:5.2,mid:5.6,treble:5.0,pres:5.4,depth:5.4,cab:3,mic:2,drvon:1,d_drive:3.5,d_tight:6.2,d_tone:4.7,d_level:5.6}],
+['Chrome Bite',{mode:2,gain:6.2,tight:7.8,bass:3.9,mid:6.0,treble:6.4,pres:6.6,depth:2.8,cab:4,mic:1,drvon:1,d_drive:4.0,d_tight:8.2,d_tone:6.5,d_level:5.7}],
+['Heavy Glass',{mode:2,gain:6.9,tight:6.8,bass:4.3,mid:6.4,treble:5.3,pres:5.8,depth:4.0,cab:2,mic:2,drvon:1,d_drive:4.2,d_tight:7.3,d_tone:5.0,d_level:5.8}],
+['Machine Heart',{mode:2,gain:8.0,tight:7.2,bass:3.8,mid:5.4,treble:6.1,pres:6.3,depth:3.6,cab:2,mic:0,bston:1,b_gain:4.0,b_tone:6.0,b_level:5.8,d_drive:4.7,d_tight:8.0}]
+]);
+add('DJENT & RHYTHM',[
+['Surgical Pick',{mode:2,gain:6.6,tight:8.8,bass:3.1,mid:6.1,treble:5.3,pres:6.5,depth:2.6,cab:2,mic:0,drvon:1,d_drive:5.2,d_tight:9,d_tone:5.1,d_level:5.8,hpf:65,lpf:9000}],
+['Glass Chug',{mode:2,gain:6.3,tight:9.2,bass:3.0,mid:6.7,treble:5.0,pres:6.8,depth:2.3,cab:4,mic:0,drvon:1,d_drive:5.0,d_tight:9.3,d_tone:5.0,d_level:5.8}],
+['Polished Chug',{mode:2,gain:7.0,tight:8.4,bass:3.4,mid:5.9,treble:5.8,pres:6.1,depth:2.9,cab:2,mic:1,drvon:1,d_drive:5.5,d_tight:8.8,d_tone:5.6,d_level:5.9}],
+['Dry Machine',{mode:2,gain:6.8,tight:9.5,bass:2.8,mid:6.4,treble:4.7,pres:5.8,depth:2.0,cab:5,mic:2,drvon:1,d_drive:5.6,d_tight:9.5,d_tone:4.6,d_level:5.8}],
+['Wide Djent',{mode:2,gain:7.2,tight:8.0,bass:3.7,mid:5.6,treble:6.1,pres:6.7,depth:3.1,cab:2,mic:1,drvon:1,d_drive:4.7,d_tight:8.5,d_tone:6.1,d_level:5.9}],
+['Concrete Palm',{mode:2,gain:7.5,tight:9.0,bass:3.2,mid:5.2,treble:5.5,pres:6.0,depth:2.7,cab:3,mic:0,drvon:1,d_drive:5.2,d_tight:9.1,d_tone:5.3,d_level:5.8}],
+['Cut Glass Rhythm',{mode:2,gain:6.0,tight:8.7,bass:3.0,mid:7.0,treble:5.7,pres:6.8,depth:2.4,cab:4,mic:0,drvon:1,d_drive:4.5,d_tight:9,d_tone:5.9,d_level:5.7}],
+['Sub Punch',{mode:2,gain:7.1,tight:7.8,bass:4.4,mid:5.4,treble:4.8,pres:5.4,depth:4.4,cab:3,mic:2,drvon:1,d_drive:4.6,d_tight:8.2,d_tone:4.6,d_level:5.8}],
+['Perimeter',{mode:2,gain:7.7,tight:8.6,bass:3.6,mid:6.0,treble:5.6,pres:6.5,depth:3.0,cab:2,mic:0,drvon:1,d_drive:5.4,d_tight:8.9,d_tone:5.4,d_level:5.9}],
+['Zero Bloom',{mode:2,gain:6.4,tight:9.6,bass:2.6,mid:6.6,treble:4.9,pres:5.9,depth:1.8,cab:5,mic:0,drvon:1,d_drive:5.8,d_tight:9.6,d_tone:4.8,d_level:5.7}]
+]);
+add('DEATH & EXTREME',[
+['Grave Engine',{mode:2,gain:8.0,tight:6.9,bass:4.6,mid:4.4,treble:5.4,pres:5.2,depth:4.9,cab:3,mic:2,drvon:1,d_drive:5.2,d_tight:7.1,d_tone:4.5,d_level:5.8}],
+['Black Tongue',{mode:2,gain:8.4,tight:6.1,bass:5.1,mid:4.0,treble:5.1,pres:4.8,depth:5.5,cab:3,mic:2,drvon:1,d_drive:5.5,d_tight:6.7,d_tone:4.2,d_level:5.9}],
+['Rotten Sun',{mode:2,gain:7.8,tight:7.2,bass:4.3,mid:4.8,treble:5.8,pres:5.6,depth:4.4,cab:2,mic:0,drvon:1,d_drive:5.0,d_tight:7.6,d_tone:5.0,d_level:5.8}],
+['Buried Mids',{mode:2,gain:8.2,tight:6.4,bass:4.8,mid:3.8,treble:5.6,pres:5.1,depth:5.1,cab:3,mic:2,drvon:1,d_drive:5.8,d_tight:7,d_tone:4.7,d_level:5.9}],
+['Feral Chain',{mode:3,gain:7.4,tight:5.8,bass:4.2,mid:5.0,treble:6.0,pres:6.2,depth:4.0,cab:2,mic:0,drvon:1,d_drive:4.8,d_tight:6.2,d_tone:6.0,d_level:5.7}],
+['Abyss Rhythm',{mode:2,gain:8.6,tight:6.8,bass:5.3,mid:4.2,treble:4.9,pres:4.7,depth:5.8,cab:3,mic:2,drvon:1,d_drive:6,d_tight:7.2,d_tone:4.0,d_level:5.9}],
+['Ashes Down',{mode:2,gain:7.9,tight:7.4,bass:4.0,mid:4.9,treble:5.7,pres:5.7,depth:4.0,cab:2,mic:0,drvon:1,d_drive:5.4,d_tight:7.8,d_tone:5.2,d_level:5.8}],
+['Cold Kill',{mode:2,gain:8.3,tight:8.0,bass:3.6,mid:4.5,treble:5.9,pres:6.0,depth:3.5,cab:4,mic:0,drvon:1,d_drive:5.6,d_tight:8.3,d_tone:5.7,d_level:5.8}],
+['Mud Crown',{mode:2,gain:8.7,tight:5.8,bass:6.0,mid:3.9,treble:4.4,pres:4.2,depth:6.2,cab:3,mic:2,drvon:1,d_drive:5.0,d_tight:6.4,d_tone:3.9,d_level:5.9}],
+['Endless Grave',{mode:3,gain:8.0,tight:6.5,bass:4.0,mid:5.6,treble:6.2,pres:6.3,depth:3.8,cab:2,mic:1,drvon:1,d_drive:5.0,d_tight:7,d_tone:6.2,d_level:5.8}]
+]);
+add('PROGRESSIVE',[
+['Signal Garden',{mode:1,gain:4.8,tight:4.2,bass:4.8,mid:6.9,treble:6.1,pres:6.0,depth:3.6,cab:1,mic:1,drvon:1,d_drive:2.5,d_tone:6.2,d_level:5.0}],
+['Vector Bloom',{mode:2,gain:5.7,tight:6.1,bass:4.1,mid:6.5,treble:5.7,pres:6.2,depth:3.2,cab:2,mic:1,drvon:1,d_drive:3.1,d_tone:6.0,d_level:5.4}],
+['Polyrhythm Glass',{mode:2,gain:5.8,tight:6.0,bass:4.4,mid:6.7,treble:5.6,pres:6.0,depth:3.2,cab:4,mic:1,drvon:1,d_drive:3.2,d_tone:6,d_level:5.4}],
+['Luminous Prog',{mode:1,gain:5.4,tight:4.5,bass:4.9,mid:6.8,treble:6.0,pres:6.2,depth:3.7,cab:1,mic:1,drvon:1,d_drive:2.8,d_tone:6.3,d_level:5.2}],
+['Odd Meter',{mode:2,gain:6.4,tight:7.0,bass:3.8,mid:6.2,treble:5.4,pres:6.1,depth:3.1,cab:2,mic:0,drvon:1,d_drive:3.8,d_tone:5.5,d_level:5.6}],
+['Glass Cathedral',{mode:0,gain:3.8,tight:2.8,bass:4.7,mid:6.4,treble:6.5,pres:6.5,depth:3.0,cab:4,mic:1,drvon:1,d_drive:2.1,d_tone:6.4,d_level:4.8,room:2.5}],
+['Prog Low Gain',{mode:1,gain:4.6,tight:4.0,bass:5.2,mid:6.1,treble:5.6,pres:5.4,depth:4.0,cab:1,mic:0,drvon:1,d_drive:2.3,d_tone:5.8,d_level:5.1}],
+['Modern Fusion',{mode:2,gain:5.2,tight:5.7,bass:4.2,mid:7.0,treble:5.8,pres:6.0,depth:3.0,cab:2,mic:1,drvon:1,d_drive:2.7,d_tone:6.1,d_level:5.3}],
+['Clean Machine',{mode:0,gain:3.2,tight:2.4,bass:5.0,mid:6.0,treble:6.1,pres:5.8,depth:3.5,cab:0,mic:1,drvon:1,d_drive:1.7,d_tone:6.0,d_level:4.6}],
+['Fusion Edge',{mode:1,gain:5.1,tight:4.4,bass:4.7,mid:6.6,treble:6.2,pres:6.0,depth:3.3,cab:4,mic:1,drvon:1,d_drive:2.6,d_tone:6.4,d_level:5.1}],
+['Glass Chasm',{mode:2,gain:6.0,tight:6.5,bass:4.0,mid:6.4,treble:5.8,pres:6.4,depth:2.8,cab:4,mic:1,drvon:1,d_drive:3.0,d_tone:6.2,d_level:5.4}],
+['Clockwork Lead',{mode:3,gain:6.8,tight:5.4,bass:4.0,mid:7.0,treble:5.6,pres:6.0,depth:3.4,cab:2,mic:1,drvon:1,d_drive:3.5,d_tone:6.0,d_level:5.5,bston:1,b_gain:3.0,b_tone:6,b_level:5.5}]
+]);
+add('LEAD',[
+['Mercury Voice',{mode:3,gain:7.3,tight:4.7,bass:4.2,mid:7.6,treble:5.8,pres:6.2,depth:3.5,cab:2,mic:1,drvon:1,d_drive:3.6,d_tone:6.2,d_level:5.4}],
+['Glassfire Solo',{mode:3,gain:6.8,tight:5.0,bass:4.0,mid:7.3,treble:6.4,pres:6.7,depth:3.0,cab:4,mic:1,drvon:1,d_drive:3.5,d_tone:6.8,d_level:5.3}],
+['Liquid Violet',{mode:3,gain:7.0,tight:4.8,bass:4.0,mid:7.4,treble:5.4,pres:6.1,depth:3.5,cab:2,mic:1,drvon:1,d_drive:3.4,d_tone:6.2,d_level:5.4,bston:1,b_gain:3,b_tone:6.4,b_level:5.6}],
+['Singing Lead',{mode:3,gain:7.4,tight:4.4,bass:4.3,mid:7.8,treble:5.1,pres:5.8,depth:3.8,cab:3,mic:1,drvon:1,d_drive:3.2,d_tone:5.8,d_level:5.4}],
+['Highway Solo',{mode:3,gain:6.7,tight:4.2,bass:4.7,mid:7.0,treble:6.0,pres:6.3,depth:4.0,cab:1,mic:1,drvon:1,d_drive:2.8,d_tone:6.6,d_level:5.2}],
+['Laser Legato',{mode:3,gain:7.8,tight:5.2,bass:3.7,mid:7.2,treble:5.8,pres:6.6,depth:3.0,cab:4,mic:1,drvon:1,d_drive:3.8,d_tone:6.3,d_level:5.5}],
+['Dark Lead',{mode:3,gain:7.6,tight:4.8,bass:5.0,mid:6.6,treble:4.8,pres:5.0,depth:4.7,cab:3,mic:2,drvon:1,d_drive:3.5,d_tone:4.6,d_level:5.5}],
+['Sustain Arc',{mode:3,gain:8.0,tight:4.0,bass:4.1,mid:7.7,treble:5.5,pres:6.2,depth:3.2,cab:2,mic:0,drvon:1,d_drive:3.8,d_tone:6.1,d_level:5.5,bston:1,b_gain:3.2,b_tone:6.1,b_level:5.5}],
+['Neo Solo',{mode:3,gain:7.1,tight:5.5,bass:3.8,mid:7.0,treble:6.2,pres:6.8,depth:2.9,cab:4,mic:1,drvon:1,d_drive:3.9,d_tone:6.8,d_level:5.4}],
+['Vocal String',{mode:3,gain:6.6,tight:4.6,bass:4.4,mid:7.9,treble:5.2,pres:5.9,depth:3.9,cab:1,mic:1,drvon:1,d_drive:2.8,d_tone:5.8,d_level:5.2}],
+['Afterglow Lead',{mode:3,gain:6.2,tight:4.0,bass:4.8,mid:7.1,treble:5.9,pres:6.1,depth:4.4,cab:0,mic:1,drvon:1,d_drive:2.6,d_tone:6.0,d_level:5.1,room:2.2}],
+['Final Horizon',{mode:3,gain:7.7,tight:5.0,bass:4.0,mid:7.5,treble:6.0,pres:6.4,depth:3.1,cab:2,mic:0,drvon:1,d_drive:4.0,d_tone:6.2,d_level:5.6,bston:1,b_gain:3.5,b_tone:6.3,b_level:5.7}]
+]);
+add('AMBIENT & TEXTURE',[
+['Moonwire',{mode:0,gain:3.0,tight:2.1,bass:5.4,mid:5.7,treble:6.7,pres:6.4,depth:4.5,cab:0,mic:1,room:6.4,e4:1.4,e5:1.8,lpf:15000}],
+['Black Aurora',{mode:2,gain:5.0,tight:4.8,bass:5.2,mid:4.9,treble:4.6,pres:4.4,depth:5.5,cab:3,mic:2,room:6.0,lpf:8200}],
+['Nebula Clean',{mode:0,gain:3.2,tight:2.2,bass:5.1,mid:5.5,treble:6.4,pres:6.1,depth:4.8,cab:0,mic:1,room:5.5,e4:1.2,e5:1.6,lpf:15000}],
+['Purple Air',{mode:0,gain:3.6,tight:2.6,bass:4.8,mid:5.8,treble:6.6,pres:6.3,depth:4.0,cab:4,mic:1,room:6,e3:.7,e4:1.5,e5:1.8}],
+['Slow Bloom',{mode:1,gain:4.0,tight:3.0,bass:5.5,mid:5.8,treble:5.8,pres:5.2,depth:5.0,cab:1,mic:2,room:5.2,drvon:1,d_drive:1.8,d_tone:5.4,d_level:4.7}],
+['Dark Nebula',{mode:2,gain:5.5,tight:5.0,bass:5.0,mid:4.7,treble:4.8,pres:4.6,depth:5.8,cab:3,mic:2,room:5.5,lpf:8500}],
+['Starlight Edge',{mode:1,gain:4.5,tight:3.4,bass:4.7,mid:6.0,treble:6.5,pres:6.2,depth:4.1,cab:4,mic:1,room:4.8,drvon:1,d_drive:2.4,d_tone:6.4,d_level:4.8}],
+['Frozen Glass',{mode:0,gain:2.8,tight:2.0,bass:4.5,mid:5.9,treble:6.9,pres:6.8,depth:3.7,cab:4,mic:1,room:6.2,e4:1.8,e5:2.0}],
+['Cathedral Lead',{mode:3,gain:6.2,tight:4.0,bass:4.1,mid:6.8,treble:5.6,pres:6.0,depth:3.5,cab:2,mic:1,room:5.6,drvon:1,d_drive:2.8,d_tone:6.1,d_level:5.0}],
+['Nocturne',{mode:1,gain:4.1,tight:2.8,bass:5.8,mid:5.2,treble:4.8,pres:4.5,depth:5.1,cab:3,mic:2,room:5.8}]
+]);
+add('SITAR & WORLD',[
+['Raga Spark',{mode:4,gain:4.7,tight:3.6,bass:5.0,mid:6.3,treble:6.6,pres:6.8,depth:4.5,cab:4,mic:1,stron:1,s_buzz:6.5,s_res:6.2,s_tone:6.8,s_mix:7.5,room:1.5}],
+['Raga Glass',{mode:4,gain:4.2,tight:3.0,bass:5.4,mid:6.0,treble:7.0,pres:7.0,depth:4.0,cab:0,mic:1,stron:1,s_buzz:5.0,s_res:7.0,s_tone:7.5,s_mix:7.8}],
+['Dark Sitar',{mode:4,gain:5.2,tight:4.0,bass:5.8,mid:5.5,treble:5.0,pres:4.7,depth:5.4,cab:3,mic:2,stron:1,s_buzz:6.8,s_res:6.5,s_tone:4.7,s_mix:7.2}],
+['Electric Raga',{mode:4,gain:5.5,tight:4.6,bass:4.8,mid:6.8,treble:6.1,pres:6.2,depth:3.8,cab:2,mic:0,stron:1,s_buzz:7.5,s_res:5.8,s_tone:6.4,s_mix:6.8,drvon:1,d_drive:2.5,d_tone:6.0,d_level:5.0}],
+['Jali Resonance',{mode:4,gain:4.6,tight:3.5,bass:5.2,mid:6.6,treble:6.5,pres:6.5,depth:4.4,cab:1,mic:1,stron:1,s_buzz:5.8,s_res:7.5,s_tone:6.6,s_mix:8}],
+['Temple Wire',{mode:4,gain:3.8,tight:2.8,bass:5.7,mid:6.0,treble:6.8,pres:6.9,depth:4.9,cab:0,mic:1,stron:1,s_buzz:4.8,s_res:8,s_tone:7.2,s_mix:8,room:2.0}]
+]);
+add('SPECIAL',[
+['Octave Forge',{mode:2,gain:6.5,tight:7.0,bass:4.0,mid:5.8,treble:5.5,pres:6.0,depth:3.3,cab:2,mic:0,tunon:1,t_pitch:-12,t_blend:4,drvon:1,d_drive:4.5,d_tight:7.5,d_tone:5.5,d_level:5.6}],
+['Drop Hammer',{mode:2,gain:7.4,tight:7.8,bass:3.8,mid:5.2,treble:5.4,pres:5.8,depth:3.1,cab:3,mic:0,tunon:1,t_pitch:-2,t_blend:10,drvon:1,d_drive:4.5,d_tight:8,d_tone:5,d_level:5.8}],
+['Boosted Clean',{mode:0,gain:3.6,tight:3.0,bass:4.8,mid:6.2,treble:6.0,pres:5.8,depth:3.7,cab:1,mic:0,bston:1,b_gain:5,b_tone:6.2,b_level:5.5}],
+['Comp Snap',{mode:1,gain:4.0,tight:3.5,bass:5.0,mid:5.8,treble:6.2,pres:6.0,depth:3.8,cab:0,mic:1,cmpon:1,c_sus:7,c_att:3,c_level:5.2,drvon:1,d_drive:1.8,d_tone:6,d_level:4.8}],
+['Radio Crunch',{mode:1,gain:5.2,tight:4.0,bass:4.0,mid:7.2,treble:6.8,pres:6.6,depth:2.8,cab:5,mic:0,e1:-2,e2:-1,e3:2.5,e4:2,e5:-1.5,hpf:100,lpf:6500}],
+['Broken Speaker',{mode:1,gain:4.8,tight:3.0,bass:3.2,mid:6.8,treble:3.8,pres:3.5,depth:2.5,cab:5,mic:2,e1:-3,e2:1,e3:3,e4:-2,e5:-4,hpf:140,lpf:4800}]
+]);
+// Exactly six synth presets: the rest of the bank is guitar/amp focused.
+add('SYNTH (6)',[
+['Neon Blade',{mode:2,gain:6.2,tight:7.0,bass:4.0,mid:5.8,treble:5.8,pres:6.1,cab:2,mic:0,drvon:1,d_drive:3.8,d_tight:7.5,d_tone:5.8,d_level:5.5,synon:1,synmix:.78,synvoice:2,synwave:0,synsub:.35,syncut:3600,synres:.22,synatt:4,syndec:140,synsus:.62,synrel:170,syntrk:.82,synstab:.82,syndrive:2.8,synspread:.25,synmod:.3,synosc2:.72,syndetune:8,synpw:.5,synfilter:0,synenvamt:.65,synlforate:4,synlfodepth:.14,synglide:18,synnoise:.015}],
+['FM Machine',{mode:2,gain:6.8,tight:7.5,bass:3.8,mid:5.5,treble:5.4,pres:6.0,cab:3,mic:2,drvon:1,d_drive:4.2,d_tight:8,d_tone:5,d_level:5.6,synon:1,synmix:.72,synvoice:5,synwave:3,synsub:.28,syncut:5200,synres:.28,synatt:2,syndec:180,synsus:.55,synrel:140,syntrk:.88,synstab:.9,syndrive:4.8,synspread:.18,synmod:.82,synosc2:.8,syndetune:5,synpw:.5,synfilter:0,synenvamt:.72,synlforate:6,synlfodepth:.2,synglide:10,synnoise:.01}],
+['Glass Circuit',{mode:0,gain:3.2,tight:2.3,bass:5.2,mid:5.8,treble:6.4,pres:6.2,cab:4,mic:1,room:2.5,synon:1,synmix:.68,synvoice:0,synwave:3,synsub:.18,syncut:7200,synres:.12,synatt:8,syndec:260,synsus:.72,synrel:320,syntrk:.78,synstab:.88,syndrive:.8,synspread:.3,synmod:.18,synosc2:.55,syndetune:9,synpw:.5,synfilter:0,synenvamt:.4,synlforate:2.5,synlfodepth:.12,synglide:28,synnoise:.01}],
+['Pulse Forge',{mode:2,gain:6.0,tight:7.6,bass:3.8,mid:6.0,treble:5.6,pres:6.2,cab:2,mic:0,drvon:1,d_drive:3.8,d_tight:8,d_tone:5.8,d_level:5.5,synon:1,synmix:.8,synvoice:6,synwave:1,synsub:.42,syncut:2800,synres:.36,synatt:1.5,syndec:100,synsus:.48,synrel:110,syntrk:.9,synstab:.86,syndrive:3.5,synspread:.35,synmod:.28,synosc2:.82,syndetune:-6,synpw:.32,synfilter:0,synenvamt:.78,synlforate:5.5,synlfodepth:.18,synglide:6,synnoise:.025}],
+['Sub Horizon',{mode:2,gain:5.8,tight:6.4,bass:5.2,mid:5.0,treble:4.8,pres:5.0,depth:4.5,cab:3,mic:2,synon:1,synmix:.74,synvoice:7,synwave:0,synsub:.75,syncut:1800,synres:.2,synatt:12,syndec:240,synsus:.78,synrel:300,syntrk:.84,synstab:.92,syndrive:2.2,synspread:.12,synmod:.2,synosc2:.7,syndetune:4,synpw:.5,synfilter:0,synenvamt:.35,synlforate:2,synlfodepth:.1,synglide:35,synnoise:.008}],
+['Pluck Reactor',{mode:3,gain:6.4,tight:5.8,bass:4.0,mid:6.8,treble:6.0,pres:6.5,cab:2,mic:1,drvon:1,d_drive:3.2,d_tight:6.8,d_tone:6,d_level:5.4,synon:1,synmix:.7,synvoice:3,synwave:0,synsub:.2,syncut:4600,synres:.3,synatt:.8,syndec:80,synsus:.28,synrel:120,syntrk:.9,synstab:.84,syndrive:3.8,synspread:.2,synmod:.42,synosc2:.65,syndetune:12,synpw:.5,synfilter:0,synenvamt:.9,synlforate:7,synlfodepth:.22,synglide:8,synnoise:.018}]
+]);
+const PRE={};Object.values(CATS).forEach(c=>Object.assign(PRE,c));
+
+// ---- bridge to the plugin: plain same-origin requests answered by the plugin (no JUCE JS needed) ----
+const inPlugin=location.hostname==='juce.backend';
+const R={},M={},V={},L={},T={};
+D.forEach(([id,l,mn,mx,df,u,st])=>{R[id]=[mn,mx,df,st];M[id]={l,u};V[id]=df;L[id]=[];T[id]=0});
+const $=id=>document.getElementById(id),get=id=>V[id];
+const fire=id=>L[id].forEach(f=>f());
+const clampv=(id,v)=>{const[mn,mx,,st]=R[id];return +Math.min(mx,Math.max(mn,Math.round((v-mn)/st)*st+mn)).toFixed(4)};
+function showErr(m){const e=$('err');e.textContent=m;e.style.display='block'}
+let seq=0,failed=false;
+const call=path=>fetch('/shz/'+path+'?_='+(++seq),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()});
+const tell=p=>p.catch(e=>{if(!failed){failed=true;showErr('Plugin link failed: '+e)}});
+const N=inPlugin?{
+  set:(id,v)=>tell(call('set/'+id+'/'+v)),
+  sets:o=>tell(call('sets/'+Object.entries(o).map(([k,v])=>k+':'+v).join(','))),
+  gest:(id,on)=>tell(call('g/'+id+'/'+on)),
+  all:()=>call('all'),poll:()=>call('poll'),
+  ld:()=>tell(call('loadIR')),cl:()=>tell(call('clearIR'))}:null;
+const gs=id=>{if(N)N.gest(id,1)},ge=id=>{if(N)N.gest(id,0)};
+const put=(id,v)=>{v=clampv(id,v);if(v===V[id])return;V[id]=v;T[id]=performance.now();fire(id);if(N)N.set(id,v)};
+const commit=(id,v)=>{gs(id);put(id,v);ge(id)};
+const putMany=o=>{const out={};Object.entries(o).forEach(([k,v])=>{if(!(k in V))return;v=clampv(k,v);V[k]=v;T[k]=performance.now();out[k]=v});
+  Object.keys(out).forEach(fire);if(N)N.sets(out)};
+const onChange=(ids,f)=>{[].concat(ids).forEach(i=>L[i].push(f))};
+if(N){try{const a=await N.all();Object.keys(a).forEach(k=>{if(k in V)V[k]=a[k]})}catch(e){showErr('Could not read plugin state: '+e)}}
+
+function mk(id,fader){
+  const [mn,mx,df,st]=R[id],m=M[id],dec=st<1?1:0,e=document.createElement('div');
+  e.className=fader?'f':'k';e.tabIndex=0;e.setAttribute('role','slider');e.title=m.l+': drag up or down, scroll, double-click to reset';
+  e.innerHTML=(fader?'<div class="ft"><b></b></div>':'<div class="kw"><div class="kr"></div><div class="kb"><i></i></div></div>')+'<span class="kv"></span><span class="kl">'+m.l+'</span>';
+  const kr=e.querySelector('.kr'),kb=e.querySelector('.kb'),cap=e.querySelector('.ft b'),kv=e.querySelector('.kv');
+  const show=()=>{const v=get(id),n=(v-mn)/(mx-mn);let label=v.toFixed(dec)+m.u;
+    if(id==='synfilter')label=['LP','HP','BP'][Math.round(v)]||label;
+    if(id==='synvoice')label=['Glass','Classic','Modern','Pluck','Air','FM','Pulse','Bass'][Math.round(v)]||label;
+    kv.textContent=label;e.setAttribute('aria-valuenow',v);
+    if(fader)cap.style.bottom=n*100+'%';else{kr.style.setProperty('--a',n*270+'deg');kb.style.transform='rotate('+(-135+n*270)+'deg)'}};
+  let down=false,sy,sv;
+  e.onpointerdown=ev=>{e.setPointerCapture(ev.pointerId);down=true;sy=ev.clientY;sv=get(id);gs(id)};
+  e.onpointermove=ev=>{if(down)put(id,sv+(sy-ev.clientY)/(ev.shiftKey?700:fader?130:170)*(mx-mn))};
+  e.onpointerup=e.onpointercancel=()=>{if(down){down=false;ge(id)}};
+  e.addEventListener('wheel',ev=>{ev.preventDefault();commit(id,get(id)+(ev.deltaY<0?1:-1)*st*(ev.shiftKey?1:Math.max(1,(mx-mn)/(st*50))))},{passive:false});
+  e.ondblclick=()=>commit(id,df);
+  e.onkeydown=ev=>{const d={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1}[ev.key];if(d){ev.preventDefault();commit(id,get(id)+d*st*(ev.shiftKey?10:1))}};
+  onChange(id,show);show();return e;
+}
+function tg(id,label){const b=document.createElement('button');b.textContent=label;b.onclick=()=>commit(id,get(id)>.5?0:1);const s=()=>b.classList.toggle('on',get(id)>.5);onChange(id,s);s();return b}
+function ch(id,names){const w=document.createElement('div');w.className='ch';names.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>commit(id,i);w.appendChild(b)});
+  const s=()=>[...w.children].forEach((b,i)=>b.classList.toggle('on',i===Math.round(get(id))));onChange(id,s);s();return w}
+function mount(root){
+  root.querySelectorAll('[data-k]').forEach(p=>p.replaceWith(mk(p.dataset.k)));
+  root.querySelectorAll('[data-f]').forEach(p=>p.replaceWith(mk(p.dataset.f,1)));
+  root.querySelectorAll('[data-tg]').forEach(p=>p.replaceWith(tg(p.dataset.tg,p.dataset.l||'On')));
+  root.querySelectorAll('[data-ch]').forEach(p=>{const c=ch(p.dataset.ch,p.dataset.n.split(','));if(p.getAttribute('style'))c.setAttribute('style',p.getAttribute('style'));p.replaceWith(c)});
+}
+
+// pedals
+const G={drv:'<path d="M3 20 L12 20 Q18 4 22 4 Q26 4 32 20 L43 20"/>',bst:'<path d="M8 28 L23 10 L38 28 M8 36 L23 18 L38 36"/>',cmp:'<path d="M4 8 L42 18 M4 32 L42 22"/>',tun:'<path d="M23 6 V30 M12 20 L23 32 L34 20 M8 36 H38"/>',sit:'<circle cx="23" cy="31" r="7"/><path d="M23 24 V3 M19 8 H27 M20 13 H26 M20 18 H26 M17 5 L20 5 M26 5 L29 5"/>'};
+const PEDS=[['drv','HZ DRIVE','linear-gradient(#2b2e33,#16181b)',['d_drive','d_tone','d_level','d_tight'],'drvon'],
+['bst','HZ BOOST','linear-gradient(#262b36,#14171e)',['b_gain','b_tone','b_level'],'bston'],
+['cmp','HZ COMP','linear-gradient(#26302f,#141a19)',['c_sus','c_att','c_level'],'cmpon'],
+['tun','HZ DROP','linear-gradient(#302a2a,#191515)',['t_pitch','t_blend'],'tunon'],
+['sit','HZ SITAR','linear-gradient(#3d301b,#1d160c)',['s_buzz','s_res','s_tone','s_mix'],'stron']];
+$('peds').innerHTML=PEDS.map(([g,n,bg,ks,on])=>`<div class="ped" style="background:${bg}"><div class="rw">${ks.map(k=>`<div data-k="${k}"></div>`).join('')}</div><svg class="gl" viewBox="0 0 46 40">${G[g]}</svg><div class="nm">${n}</div><button class="fs" data-on="${on}" title="Footswitch"></button><i class="led" data-led="${on}"></i></div>`).join('');
+document.querySelectorAll('.fs').forEach(b=>{const id=b.dataset.on,l=b.parentNode.querySelector('.led');b.onclick=()=>commit(id,get(id)>.5?0:1);const s=()=>l.classList.toggle('on',get(id)>.5);onChange(id,s);s()});
+
+// amp grille: a different grille for each amp style
+const head=document.querySelector('.head');
+function grille(m){
+  let h='';
+  if(m==0){ // clean: woven cloth with a diamond lattice
+    for(let i=-4;i<30;i++){const x=i*26;h+=`<path d="M${x} 0 L${x+190} 190 M${x+190} 0 L${x} 190" stroke="#5b4526" stroke-width="1.2" opacity=".55" fill="none"/>`}
+    h+='<rect x="8" y="8" width="644" height="174" fill="none" stroke="#5b4526" stroke-width="2" opacity=".7"/>';
+  }else if(m==1){ // crunch: perforated plate, amber backlight
+    for(let r=0;r<12;r++)for(let c=0;c<44;c++){const x=18+c*14.5+(r%2?7:0),y=14+r*15;if(x<648)h+=`<circle cx="${x}" cy="${y}" r="3.2" fill="var(--glow)" opacity="${.45+.5*Math.abs(Math.sin(c*.31+r*.4))}"/>`}
+  }else if(m==2){ // modern: layered waveform slits with contour lines and a hot centre
+    h='<defs><linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd6ee" stop-opacity=".35"/><stop offset=".5" stop-color="#f2fdff"/><stop offset="1" stop-color="#7fd6ee" stop-opacity=".35"/></linearGradient></defs>';
+    let back='',front='',top=[],bot=[];
+    for(let i=0;i<58;i++){const a=.22+.78*Math.abs(Math.sin(i*.27)*Math.cos(i*.065)),H=a*150,x=14+i*11,y=(190-H)/2;
+      back+=`<rect x="${x-1.5}" y="${y-9}" width="8" height="${H+18}" rx="4" fill="var(--glow)" opacity=".13"/>`;
+      front+=`<rect x="${x}" y="${y}" width="5" height="${H}" rx="2.5" fill="url(#gm)"/>`;
+      top.push((x+2.5)+','+(y-9));bot.push((x+2.5)+','+(y+H+9))}
+    h+=back+`<polyline points="${top.join(' ')}" fill="none" stroke="var(--glow)" stroke-width="1" opacity=".5"/><polyline points="${bot.join(' ')}" fill="none" stroke="var(--glow)" stroke-width="1" opacity=".5"/><path d="M8 95H652" stroke="var(--glow)" stroke-width=".6" opacity=".4"/>`+front;
+    h+='<path d="M8 10H40M8 10V30M652 10H620M652 10V30M8 180H40M8 180V160M652 180H620M652 180V160" stroke="var(--glow)" stroke-width="1.2" fill="none" opacity=".7"/>';
+  }else if(m==4){ // sitar signature: carved jali lattice of eight-pointed stars, lit from behind
+    for(let r=0;r<4;r++)for(let k=0;k<14;k++){const cx=44+k*44,cy=29+r*44,q=15.8;
+      h+=`<g transform="translate(${cx} ${cy})"><rect x="${-q}" y="${-q}" width="${2*q}" height="${2*q}" fill="var(--glow)" fill-opacity=".2" stroke="var(--glow)" stroke-width="1.2"/><rect x="${-q}" y="${-q}" width="${2*q}" height="${2*q}" transform="rotate(45)" fill="var(--glow)" fill-opacity=".2" stroke="var(--glow)" stroke-width="1.2"/><circle r="4.4" fill="var(--glow)"/></g>`}
+    h+='<rect x="6" y="6" width="648" height="178" fill="none" stroke="var(--glow)" stroke-width="2" opacity=".6"/>';
+  }else{ // lead: angular slashes
+    for(let i=0;i<32;i++){const x=16+i*20,len=60+110*Math.abs(Math.sin(i*.55+1)),y1=(190-len)/2,y2=y1+len,sk=26;h+=`<polygon points="${x},${y1} ${x+7},${y1} ${x+7+sk},${y2} ${x+sk},${y2}" fill="var(--glow)"/>`}
+  }
+  const s=$('gr');s.style.opacity=0;s.innerHTML=h;requestAnimationFrame(()=>s.style.opacity=1);
+}
+const setStyle=()=>{const m=Math.round(get('mode'));head.dataset.m=m;grille(m)};
+onChange('mode',setStyle);setStyle();
+
+// cab drawing
+function cabDraw(){const mode=Math.round(get('cab')),s=$('cabsvg');
+  const sp=mode===0?[[210,135,92]]:mode===1?[[210,70,52],[210,200,52]]:mode===2?[[135,70,52],[285,70,52],[135,200,52],[285,200,52]]:mode===3?[[135,70,52],[285,70,52],[135,200,52],[285,200,52]]:mode===4?[[145,90,62],[275,90,62],[210,205,58]]:[[125,75,45],[210,75,45],[295,75,45],[125,185,45],[210,185,45],[295,185,45]];
+  s.innerHTML=`<rect x="14" y="10" width="392" height="250" rx="8" fill="#0d0e10" stroke="#2a2d33"/><rect x="28" y="24" width="364" height="222" fill="#07080a" stroke="#1c1e22"/>`+
+  sp.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#101214" stroke="#2f333a" stroke-width="2"/><circle cx="${x}" cy="${y}" r="${r*.72}" fill="none" stroke="#1d2025"/><circle cx="${x}" cy="${y}" r="${r*.3}" fill="#0a0b0c" stroke="#2a2d33"/>`).join('')+
+  `<text x="210" y="256" fill="#868b93" font-size="9" letter-spacing="4" text-anchor="middle">SISHHIN</text>`}
+onChange('cab',cabDraw);cabDraw();
+
+// EQ
+$('eqr').innerHTML='<div data-k="hpf"></div>'+[1,2,3,4,5].map(i=>`<div class="band"><div data-f="e${i}"></div><div data-k="f${i}"></div></div>`).join('')+'<div data-k="lpf"></div>';
+const eqc=$('eqc'),x2=eqc.getContext('2d');
+function eqDraw(){const W=eqc.width,H=eqc.height;x2.clearRect(0,0,W,H);x2.strokeStyle='#1d2025';x2.lineWidth=1;
+  [-10,0,10].forEach(db=>{const y=H/2-db/18*H;x2.beginPath();x2.moveTo(0,y);x2.lineTo(W,y);x2.stroke()});
+  x2.strokeStyle='#7fd6ee';x2.lineWidth=2;x2.beginPath();
+  for(let px=0;px<=W;px+=3){const f=20*Math.pow(1000,px/W),l=Math.log(f);let db=0;
+    for(let i=1;i<=5;i++){const g=get('e'+i),f0=Math.log(get('f'+i));
+      db+=i==1?g/(1+Math.exp(3*(l-f0))):i==5?g/(1+Math.exp(-3*(l-f0))):g*Math.exp(-Math.pow(l-f0,2)/(2*.5*.5))}
+    db-=Math.max(0,Math.log2(get('hpf')/f))*12;db-=Math.max(0,Math.log2(f/get('lpf')))*12;
+    const y=H/2-Math.max(-18,Math.min(18,db))/18*H/2*1.0;px?x2.lineTo(px,y):x2.moveTo(px,y)}
+  x2.stroke()}
+onChange(['e1','e2','e3','e4','e5','f1','f2','f3','f4','f5','hpf','lpf'],eqDraw);
+
+// nav
+const IC={synth:'<path d="M4 18 L8 8 L12 15 L16 5 L20 18"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="5" r="1.5"/>' ,pedals:'<rect x="6" y="3" width="12" height="18" rx="2"/><circle cx="12" cy="9" r="2.5"/><circle cx="12" cy="16" r="1.5"/>',amp:'<rect x="2" y="7" width="20" height="10" rx="1"/><path d="M5 12h14"/>',cab:'<rect x="4" y="3" width="16" height="18" rx="1"/><circle cx="12" cy="12" r="5"/>',eq:'<path d="M6 4v16M12 4v16M18 4v16"/><circle cx="6" cy="9" r="2" fill="#090a0c"/><circle cx="12" cy="15" r="2" fill="#090a0c"/><circle cx="18" cy="8" r="2" fill="#090a0c"/>'};
+Object.keys(IC).forEach(k=>{const b=document.createElement('button');b.title=k[0].toUpperCase()+k.slice(1);b.innerHTML=`<svg viewBox="0 0 24 24">${IC[k]}</svg><span>${k}</span>`;b.classList.toggle('on',k==='amp');
+  b.onclick=()=>{document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('show',p.id==='p-'+k));[...$('nav').children].forEach(c=>c.classList.toggle('on',c===b));if(k==='eq')eqDraw()};$('nav').appendChild(b)});
+
+mount(document.body);
+
+// synth waveform selector
+const waveNames=['SAW','SQUARE','TRI','SINE','HYBRID'];
+const sw=$('synwave');
+waveNames.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>commit('synwave',i);sw.appendChild(b)});
+onChange('synwave',()=>[...sw.children].forEach((b,i)=>b.classList.toggle('on',i===Math.round(get('synwave')))));
+const voiceNames=['GLASS','CLASSIC','MODERN','PLUCK','AIR','FM METAL','PULSE','BASS'];
+const sv=$('synvoice');
+voiceNames.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>commit('synvoice',i);sv.appendChild(b)});
+onChange('synvoice',()=>[...sv.children].forEach((b,i)=>b.classList.toggle('on',i===Math.round(get('synvoice')))));
+const sc=$('sync'),sx=sc.getContext('2d');
+function synthDraw(){
+  const W=sc.width,H=sc.height;sx.clearRect(0,0,W,H);
+  sx.strokeStyle='#24182d';sx.lineWidth=1;
+  for(let y=20;y<H;y+=30){sx.beginPath();sx.moveTo(0,y);sx.lineTo(W,y);sx.stroke()}
+  sx.strokeStyle='#7fd6ee';sx.lineWidth=2;sx.beginPath();
+  const wave=Math.round(get('synwave')),voice=Math.round(get('synvoice')),cut=get('syncut'),res=get('synres'),pw=get('synpw');
+  for(let x=0;x<W;x+=2){
+    const p=x/W*8;let y;
+    if(wave===0)y=2*(p-Math.floor(p+.5));
+    else if(wave===1)y=(p%1)<pw?1:-1;
+    else if(wave===2)y=1-4*Math.abs((p%1)-Math.floor((p%1)+.5));
+    else if(wave===3)y=Math.sin(p*Math.PI*2);
+    else y=.68*(2*(p-Math.floor(p+.5)))+.32*Math.sin(p*Math.PI*4);
+    const filt=.35+.65*Math.min(1,cut/7000);
+    const voiceGain=[1,.95,1.05,.9,1.15,1.2,1,.92][voice];
+    y*=filt*voiceGain*(1+.18*res*Math.sin(p*3));
+    const yy=H*.52-y*H*.34;
+    x?sx.lineTo(x,yy):sx.moveTo(x,yy);
+  }
+  sx.strokeStyle='#7fd6ee';sx.stroke();
+  sx.strokeStyle='#ffffff18';sx.beginPath();sx.moveTo(0,H*.52);sx.lineTo(W,H*.52);sx.stroke();
+}
+onChange(['synwave','synvoice','syncut','synres','synmod','synpw','synlfodepth'],synthDraw);synthDraw();
+
+// presets + A/B
+{const o=document.createElement('option');o.textContent='— Presets —';o.value='';$('preset').appendChild(o)}
+Object.entries(CATS).forEach(([c,ps])=>{const g=document.createElement('optgroup');g.label=c;Object.keys(ps).forEach(k=>{const o=document.createElement('option');o.textContent=k;g.appendChild(o)});$('preset').appendChild(g)});$('presetCount').textContent=Object.keys(PRE).length+' PRESETS';
+const snap=()=>Object.fromEntries(D.map(d=>[d[0],get(d[0])])),restore=o=>putMany(o);
+const load=n=>{const b={};D.forEach(([id,,,,df])=>{if(!/on$/.test(id)||id==='gateon')b[id]=df});b.drvon=1;b.bston=0;b.cmpon=0;b.tunon=0;b.stron=0;b.synon=0;b.t_pitch=-2;restore({...b,...PRE[n]})};
+$('preset').onchange=()=>{if($('preset').value)load($('preset').value)};
+const stepP=d=>{const s=$('preset'),n=s.length-1;let i=s.selectedIndex-1;if(i<0)i=d>0?-1:0;i=((i+d)%n+n)%n;s.selectedIndex=i+1;s.onchange()};
+$('prev').onclick=()=>stepP(-1);$('next').onclick=()=>stepP(1);
+const sl={a:null,b:null};let cur='a';
+const pick=s=>{if(s===cur)return;sl[cur]=snap();const f=sl[cur];cur=s;if(!sl[s])sl[s]=f;restore(sl[s]);$('ab-a').classList.toggle('on',s==='a');$('ab-b').classList.toggle('on',s==='b')};
+$('ab-a').onclick=()=>pick('a');$('ab-b').onclick=()=>pick('b');
+eqDraw();
+
+// meters, host automation and IR name come from the plugin by polling
+const mt=(e,v)=>{const d=20*Math.log10(v+1e-5);e.style.width=Math.max(0,Math.min(100,(d+60)/60*100))+'%';e.classList.toggle('hot',d>-3)};
+if(N){const b=$('irbtn'),x=$('irclr');let irn=null;
+  const show=n=>{b.textContent=n?('IR: '+n):'Load WAV IR';x.style.display=n?'inline-block':'none'};
+  b.disabled=false;b.onclick=()=>N.ld();x.onclick=()=>N.cl();
+  const tick=async()=>{try{const d=await N.poll();mt($('m-in'),d.in);mt($('m-out'),d.out);
+      if(d.ir!==irn){irn=d.ir;show(irn)}
+      const now=performance.now();Object.keys(d.p||{}).forEach(k=>{if(!(k in V)||now-T[k]<500)return;if(Math.abs(d.p[k]-V[k])>1e-4){V[k]=d.p[k];fire(k)}});
+    }catch(e){if(!failed){failed=true;showErr('Plugin link failed: '+e)}}setTimeout(tick,40)};
+  tick()}
+}catch(e){const b=document.getElementById('err');b.textContent='UI error: '+e;b.style.display='block'}})();
+</script>
+</body>
+</html>
